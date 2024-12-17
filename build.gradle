@@ -1,0 +1,75 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.4.0'
+	id 'io.spring.dependency-management' version '1.1.6'
+}
+
+group = 'com.BOA'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+ext {
+	set('springCloudVersion', "2024.0.0")
+}
+
+dependencies {
+
+	// Exclude spring-boot-starter-logging, already included in spring-boot-starter-web
+	implementation('org.springframework.boot:spring-boot-starter-logging') {
+		exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+	}
+
+	// Log4J dependencies
+	implementation 'org.apache.logging.log4j:log4j-api:2.17.1'
+	implementation 'org.apache.logging.log4j:log4j-core:2.17.1'
+
+	// Spring Boot dependencies
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa' // JPA if needed for AccountService
+	implementation 'org.springframework.boot:spring-boot-starter-web' // Web support
+	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign' // Feign for communication with UserService
+
+	// Hibernate Validator for Java Bean Validation (for Jakarta)
+	implementation 'org.hibernate.validator:hibernate-validator:7.0.4.Final'  // Make sure you have the latest version
+
+	// Jakarta Bean Validation API
+	implementation 'jakarta.validation:jakarta.validation-api:3.0.0'  // Jakarta Validation API
+
+	// Lombok to reduce boilerplate code
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	// Devtools for hot-reloading in development
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+	// MySQL connector
+	runtimeOnly 'mysql:mysql-connector-java:8.0.33'
+
+	// Testing dependencies
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+	}
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
