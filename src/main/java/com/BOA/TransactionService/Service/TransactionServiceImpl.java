@@ -32,6 +32,11 @@ public class TransactionServiceImpl implements TransactionService {
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new RuntimeException("Account with ID " + accountId + " not found"));
 
+        // Ensure the transaction is valid (you could add additional validation here)
+        if (transaction.getAmount() == null || transaction.getAmount() <= 0) {
+            throw new IllegalArgumentException("Transaction amount must be greater than zero.");
+        }
+
         // Log transaction creation details
         logger.info("Creating transaction for account ID: {}", accountId);
         logger.info("Transaction Type: {}", transaction.getTransactionType());
@@ -43,7 +48,6 @@ public class TransactionServiceImpl implements TransactionService {
         // Save the transaction, ensuring the persistence context manages it
         return transactionRepository.save(transaction);
     }
-
 
     @Override
     @Transactional
@@ -68,7 +72,6 @@ public class TransactionServiceImpl implements TransactionService {
             logger.error("Transaction with ID {} not found for update", transaction.getTransactionId());
             return null;
         }
-
 
         // Log transaction update
         logger.info("Updating transaction ID: {}", transaction.getTransactionId());

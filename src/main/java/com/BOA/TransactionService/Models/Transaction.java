@@ -8,6 +8,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "transactions")
 @Data
 public class Transaction {
 
